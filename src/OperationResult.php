@@ -85,6 +85,12 @@ class OperationResult implements Stringable, JsonSerializable
         return $this;
     }
 
+    public function withLastErrorOnly(): static
+    {
+        $this->error = $this->error->withoutPrevious();
+        return $this;
+    }
+
     public function withoutData(): static
     {
         $this->data = null;
@@ -94,6 +100,17 @@ class OperationResult implements Stringable, JsonSerializable
     public function withoutError(): static
     {
         $this->error = null;
+        return $this;
+    }
+
+    public function withoutErrorContext(): static
+    {
+        if (empty($this->error)) {
+            return $this;
+        }
+
+        $this->error = $this->error->withoutContext();
+
         return $this;
     }
 
