@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use OpResult\Error;
 use PHPUnit\Framework\TestCase;
+use Thumbrise\OpResult\Error;
 
 class ErrorTest extends TestCase
 {

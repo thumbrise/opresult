@@ -1,6 +1,6 @@
 <?php
 
-namespace OpResult;
+namespace Thumbrise\OpResult;
 
 use Exception;
 use JsonSerializable;

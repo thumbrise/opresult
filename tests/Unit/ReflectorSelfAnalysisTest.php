@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use OpResult\Reflector;
 use PHPUnit\Framework\TestCase;
+use Thumbrise\OpResult\Reflector;
 
 /**
  * !!! При модификации теста, стоит обратить внимание на переменные $line, $function, $class.
@@ -17,7 +17,7 @@ class ReflectorSelfAnalysisTest extends TestCase
     {
         $line = 23;
         $function = 'getCallInfo';
-        $class = 'OpResult\Reflector';
+        $class = Reflector::class;
 
 
         $result = Reflector::getCallInfo([['class' => Reflector::class, 'function' => 'getCallInfo']]);
