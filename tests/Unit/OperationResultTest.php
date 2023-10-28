@@ -26,4 +26,23 @@ class OperationResultTest extends TestCase
         $this->assertTrue($result1->isError($code2));
         $this->assertTrue($result1->isError($code3));
     }
+
+    /**
+     * @test
+     */
+    public function withLastErrorOnly()
+    {
+        $code2 = 'Какой то внутренний код уровня 2';
+        $result2 = OperationResult::error('Что то пошло не так на уровне 2', $code2);
+
+        $code1 = 'Конечный код';
+        $result1 = $result2->withError('И правда что-то не так', $code1)->withLastErrorOnly();
+
+
+        $this->assertNotNull($result1->error);
+        $errorArray = $result1->error->toArray();
+        $this->assertArrayHasKey('error_code', $errorArray);
+        $this->assertEquals($code1, $errorArray['error_code']);
+        $this->assertArrayNotHasKey('error_previous', $errorArray);
+    }
 }

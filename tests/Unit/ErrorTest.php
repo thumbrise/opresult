@@ -13,8 +13,25 @@ class ErrorTest extends TestCase
     public function notStringMessage()
     {
         Error::make(['sine' => 'asd']);
-        
+
         $this->assertTrue(true);
+    }
+
+    /**
+     * @test
+     */
+    public function withoutPrevious()
+    {
+        $code2 = 'Какой то внутренний код уровня 2';
+        $error2 = Error::make('Что то пошло не так на уровне 2', $code2);
+
+        $code1 = 'Конечный код';
+        $error1 = $error2->wrap('И правда что-то не так', $code1)->withoutPrevious();
+
+        $errorArray = $error1->toArray();
+        $this->assertArrayHasKey('error_code', $errorArray);
+        $this->assertEquals($code1, $errorArray['error_code']);
+        $this->assertArrayNotHasKey('error_previous', $errorArray);
     }
 
     /**
