@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use OpResult\OperationResult;
 use PHPUnit\Framework\TestCase;
+use Thumbrise\OpResult\OperationResult;
 
 class OperationResultTest extends TestCase
 {

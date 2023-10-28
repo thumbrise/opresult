@@ -1,6 +1,6 @@
 <?php
 
-namespace OpResult;
+namespace Thumbrise\OpResult;
 
 /**
  * @internal
@@ -25,7 +25,7 @@ class Reflector
 
                 $classTrace = $info['class'];
                 $functionTrace = $info['function'];
-                
+
                 if ($classRegistry === $classTrace && $functionRegistry === $functionTrace) {
                     return $info;
                 }

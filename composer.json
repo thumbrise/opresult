@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "OpResult\\": "src/"
+            "Thumbrise\\OpResult\\": "src/"
         }
     },
     "autoload-dev": {
