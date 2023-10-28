@@ -32,8 +32,12 @@ class Error extends Exception implements Stringable, JsonSerializable
         $this->previous = $previous;
         $this->context = Reflector::getCallInfo(self::CONTEXTUAL_FUNCTIONS_REGISTRY);
 
-        $messageForException = sprintf("\ncode: %s\n%s", $code, $message);
-        parent::__construct($messageForException, null, $previous);
+
+        parent::__construct(
+            $this->messageForParentException($message, $code),
+            0,
+            $previous
+        );
     }
 
     public static function make(mixed $message = '', mixed $code = self::CODE_DEFAULT, ?Error $previous = null): static
@@ -94,7 +98,6 @@ class Error extends Exception implements Stringable, JsonSerializable
         return $code;
     }
 
-
     public function toArray(): array
     {
         $result = [
@@ -113,5 +116,14 @@ class Error extends Exception implements Stringable, JsonSerializable
     public function wrap(mixed $message = '', mixed $code = self::CODE_DEFAULT): static
     {
         return new static($message, $code, $this);
+    }
+
+    private function messageForParentException(mixed $message, mixed $code): string
+    {
+        if (is_array($message)) {
+            $message = json_encode($message);
+        }
+
+        return sprintf("\ncode: %s\n%s", $code, $message);
     }
 }

@@ -10,6 +10,16 @@ class ErrorTest extends TestCase
     /**
      * @test
      */
+    public function notStringMessage()
+    {
+        Error::make(['sine' => 'asd']);
+        
+        $this->assertTrue(true);
+    }
+
+    /**
+     * @test
+     */
     public function wrap()
     {
         $code3 = 'Какой то внутренний код уровня 3';
