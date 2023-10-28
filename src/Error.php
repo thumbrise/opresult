@@ -18,7 +18,7 @@ class Error implements Stringable, Jsonable, JsonSerializable
     public function __construct(mixed $message = '', mixed $code = self::CODE_DEFAULT, ?Error $previous = null)
     {
         $code = $this->prepareCode($code);
-
+        
         $this->code = $code;
         $this->message = $message;
         $this->previous = $previous;
