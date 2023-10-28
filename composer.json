@@ -1,0 +1,24 @@
+{
+    "authors": [
+        {
+            "name": "Ruslan Kokoev",
+            "email": "ruslan.kokoev.1999@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "OpResult\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    }
+}
