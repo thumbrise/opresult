@@ -14,10 +14,11 @@ class Error implements Stringable, Jsonable, JsonSerializable, Arrayable
     /**
      * Реестр нужен, чтобы была возможность забрать контекст создания ошибки.
      */
-    private const MAKE_FUNCTIONS_REGISTRY = [
-        'make',
-        'makeWithReport',
-        'wrap',
+    public const CONTEXTUAL_FUNCTIONS_REGISTRY = [
+        ...OperationResult::CONTEXTUAL_FUNCTIONS_REGISTRY,
+        ['class' => self::class, 'function' => 'make'],
+        ['class' => self::class, 'function' => 'makeWithReport'],
+        ['class' => self::class, 'function' => 'wrap'],
     ];
     public const CODE_DEFAULT = 'UNKNOWN';
     private readonly mixed $message;
@@ -32,7 +33,7 @@ class Error implements Stringable, Jsonable, JsonSerializable, Arrayable
         $this->code = $code;
         $this->message = $message;
         $this->previous = $previous;
-        $this->context = Reflector::getCallInfo(static::class, self::MAKE_FUNCTIONS_REGISTRY);
+        $this->context = Reflector::getCallInfo(self::CONTEXTUAL_FUNCTIONS_REGISTRY);
     }
 
     public static function make(mixed $message = '', mixed $code = self::CODE_DEFAULT, ?Error $previous = null): static

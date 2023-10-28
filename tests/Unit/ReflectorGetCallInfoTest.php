@@ -21,7 +21,7 @@ class ReflectorGetCallInfoTest extends TestCase
         $class = 'OpResult\Reflector';
 
 
-        $result = Reflector::getCallInfo(Reflector::class, ['getCallInfo']);
+        $result = Reflector::getCallInfo([['class' => Reflector::class, 'function' => 'getCallInfo']]);
 
 
         $this->assertEquals($line, $result['line']);

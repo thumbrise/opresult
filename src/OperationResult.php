@@ -11,7 +11,11 @@ use Stringable;
  */
 class OperationResult implements Stringable, Jsonable, JsonSerializable
 {
-
+    public const CONTEXTUAL_FUNCTIONS_REGISTRY = [
+        ['class' => self::class, 'function' => 'error'],
+        ['class' => self::class, 'function' => 'errorWithReport'],
+        ['class' => self::class, 'function' => 'withError'],
+    ];
 
     /**
      * @param mixed|null|T $data
@@ -84,7 +88,7 @@ class OperationResult implements Stringable, Jsonable, JsonSerializable
 
     public function withError(mixed $message = '', $code = Error::CODE_DEFAULT): static
     {
-        $this->error = Error::make($message, $code);
+        $this->error = $this->makeError($message, $code);
         return $this;
     }
 
@@ -98,6 +102,15 @@ class OperationResult implements Stringable, Jsonable, JsonSerializable
     {
         $this->error = null;
         return $this;
+    }
+
+    private function makeError(mixed $message = '', $code = Error::CODE_DEFAULT): Error
+    {
+        if (! empty($this->error)) {
+            return $this->error->wrap($message, $code);
+        }
+
+        return Error::make($message, $code);
     }
 
 
