@@ -2,14 +2,13 @@
 
 namespace OpResult;
 
-use Illuminate\Contracts\Support\Jsonable;
 use JsonSerializable;
 use Stringable;
 
 /**
  * @template T
  */
-class OperationResult implements Stringable, Jsonable, JsonSerializable
+class OperationResult implements Stringable, JsonSerializable
 {
     public const CONTEXTUAL_FUNCTIONS_REGISTRY = [
         ['class' => self::class, 'function' => 'error'],
@@ -39,7 +38,7 @@ class OperationResult implements Stringable, Jsonable, JsonSerializable
 
     public function __toString(): string
     {
-        return $this->toJson();
+        return json_encode($this);
     }
 
     public function isError(mixed $code = null): bool
@@ -58,20 +57,20 @@ class OperationResult implements Stringable, Jsonable, JsonSerializable
         return ! $this->isError();
     }
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
-        return $this->toJson();
+        return $this->toArray();
     }
 
-    public function toJson($options = 0)
+    public function toArray(): array
     {
         if ($this->isError()) {
-            return $this->error->toJson($options);
+            return $this->error->toArray();
         }
 
-        return json_encode([
+        return [
             'data' => $this->data
-        ]);
+        ];
     }
 
     public function withData(mixed $data): static

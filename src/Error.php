@@ -3,13 +3,11 @@
 namespace OpResult;
 
 use Exception;
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Jsonable;
 use JsonSerializable;
 use Stringable;
 use UnitEnum;
 
-class Error extends Exception implements Stringable, Jsonable, JsonSerializable, Arrayable
+class Error extends Exception implements Stringable, JsonSerializable
 {
     /**
      * Реестр нужен, чтобы была возможность забрать контекст создания ошибки.
@@ -22,18 +20,20 @@ class Error extends Exception implements Stringable, Jsonable, JsonSerializable,
     public const CODE_DEFAULT = 'UNKNOWN';
     private readonly mixed $context;
     private readonly ?Error $previous;
+    private readonly mixed $messageOriginal;
+    private readonly mixed $codeOriginal;
 
     private function __construct(mixed $message = '', mixed $code = self::CODE_DEFAULT, ?Error $previous = null)
     {
         $code = $this->prepareCode($code);
 
-        $this->code = $code;
-        $this->message = $message;
+        $this->codeOriginal = $code;
+        $this->messageOriginal = $message;
         $this->previous = $previous;
         $this->context = Reflector::getCallInfo(self::CONTEXTUAL_FUNCTIONS_REGISTRY);
 
         $messageForException = sprintf("\ncode: %s\n%s", $code, $message);
-        parent::__construct($messageForException, 0, $previous);
+        parent::__construct($messageForException, null, $previous);
     }
 
     public static function make(mixed $message = '', mixed $code = self::CODE_DEFAULT, ?Error $previous = null): static
@@ -43,12 +43,12 @@ class Error extends Exception implements Stringable, Jsonable, JsonSerializable,
 
     public function __toString(): string
     {
-        return $this->toJson();
+        return json_encode($this);
     }
 
     public function code(): mixed
     {
-        return $this->code;
+        return $this->codeOriginal;
     }
 
     public function is(mixed $code = null): bool
@@ -59,7 +59,7 @@ class Error extends Exception implements Stringable, Jsonable, JsonSerializable,
 
         $code = $this->prepareCode($code);
 
-        $result = $this->code === $code;
+        $result = $this->codeOriginal === $code;
 
         if ($result) {
             return true;
@@ -72,14 +72,14 @@ class Error extends Exception implements Stringable, Jsonable, JsonSerializable,
         return false;
     }
 
-    public function jsonSerialize(): mixed
+    public function jsonSerialize(): array
     {
-        return $this->toJson();
+        return $this->toArray();
     }
 
     public function message(): mixed
     {
-        return $this->message;
+        return $this->messageOriginal;
     }
 
     /**
@@ -108,11 +108,6 @@ class Error extends Exception implements Stringable, Jsonable, JsonSerializable,
         }
 
         return $result;
-    }
-
-    public function toJson($options = 0)
-    {
-        return json_encode($this->toArray());
     }
 
     public function wrap(mixed $message = '', mixed $code = self::CODE_DEFAULT): static
