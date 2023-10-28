@@ -18,8 +18,8 @@ class Error extends Exception implements Stringable, JsonSerializable
         ['class' => self::class, 'function' => 'wrap'],
     ];
     public const CODE_DEFAULT = 'UNKNOWN';
-    private readonly mixed $context;
-    private readonly ?Error $previous;
+    private mixed $context;
+    private ?Error $previous;
     private readonly mixed $messageOriginal;
     private readonly mixed $codeOriginal;
 
@@ -103,9 +103,11 @@ class Error extends Exception implements Stringable, JsonSerializable
         $result = [
             'error_message' => $this->message(),
             'error_code' => $this->code(),
-            'error_context' => $this->context,
         ];
 
+        if (! empty($this->context)) {
+            $result['error_context'] = $this->context;
+        }
         if (! empty($this->previous)) {
             $result['error_previous'] = $this->previous->toArray();
         }
@@ -113,7 +115,17 @@ class Error extends Exception implements Stringable, JsonSerializable
         return $result;
     }
 
-    public function withoutPrevious()
+    public function withoutContext(): static
+    {
+        $this->context = null;
+        if (! empty($this->previous)) {
+            $this->previous = $this->previous->withoutContext();
+        }
+
+        return $this;
+    }
+
+    public function withoutPrevious(): static
     {
         return new static($this->messageOriginal, $this->codeOriginal);
     }

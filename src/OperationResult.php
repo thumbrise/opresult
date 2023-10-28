@@ -103,6 +103,17 @@ class OperationResult implements Stringable, JsonSerializable
         return $this;
     }
 
+    public function withoutErrorContext(): static
+    {
+        if (empty($this->error)) {
+            return $this;
+        }
+
+        $this->error = $this->error->withoutContext();
+
+        return $this;
+    }
+
     private function makeError(mixed $message = '', $code = Error::CODE_DEFAULT): Error
     {
         if (! empty($this->error)) {

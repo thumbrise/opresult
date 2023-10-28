@@ -45,4 +45,25 @@ class OperationResultTest extends TestCase
         $this->assertEquals($code1, $errorArray['error_code']);
         $this->assertArrayNotHasKey('error_previous', $errorArray);
     }
+
+    /**
+     * @test
+     */
+    public function withoutErrorContext()
+    {
+        $code2 = 'Какой то внутренний код уровня 2';
+        $result2 = OperationResult::error('Что то пошло не так на уровне 2', $code2);
+
+        $code1 = 'Конечный код';
+        $result1 = $result2->withError('И правда что-то не так', $code1)->withoutErrorContext();
+
+
+        $this->assertNotNull($result1->error);
+        $errorArray = $result1->error->toArray();
+        $this->assertArrayHasKey('error_code', $errorArray);
+        $this->assertEquals($code1, $errorArray['error_code']);
+        $this->assertArrayNotHasKey('error_context', $errorArray);
+        $this->assertArrayHasKey('error_previous', $errorArray);
+        $this->assertArrayNotHasKey('error_context', $errorArray['error_previous']);
+    }
 }
