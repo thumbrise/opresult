@@ -3,25 +3,36 @@
 namespace OpResult;
 
 use Exception;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use JsonSerializable;
 use Stringable;
 use UnitEnum;
 
-class Error implements Stringable, Jsonable, JsonSerializable
+class Error implements Stringable, Jsonable, JsonSerializable, Arrayable
 {
+    /**
+     * Реестр нужен, чтобы была возможность забрать контекст создания ошибки.
+     */
+    private const MAKE_FUNCTIONS_REGISTRY = [
+        'make',
+        'makeWithReport',
+        'wrap',
+    ];
     public const CODE_DEFAULT = 'UNKNOWN';
     private readonly mixed $message;
     private readonly mixed $code;
+    private readonly mixed $context;
     private readonly ?Error $previous;
 
-    public function __construct(mixed $message = '', mixed $code = self::CODE_DEFAULT, ?Error $previous = null)
+    private function __construct(mixed $message = '', mixed $code = self::CODE_DEFAULT, ?Error $previous = null)
     {
         $code = $this->prepareCode($code);
-        
+
         $this->code = $code;
         $this->message = $message;
         $this->previous = $previous;
+        $this->context = Reflector::getCallInfo(static::class, self::MAKE_FUNCTIONS_REGISTRY);
     }
 
     public static function make(mixed $message = '', mixed $code = self::CODE_DEFAULT, ?Error $previous = null): static
@@ -102,17 +113,24 @@ class Error implements Stringable, Jsonable, JsonSerializable
         return self::report($this);
     }
 
-    public function toJson($options = 0)
+    public function toArray(): array
     {
-        $json = [
+        $result = [
             'error_message' => $this->message(),
             'error_code' => $this->code(),
+            'error_context' => $this->context,
         ];
+
         if (! empty($this->previous)) {
-            $json['error_previous'] = $this->previous->toJson();
+            $result['error_previous'] = $this->previous->toArray();
         }
 
-        return json_encode($json);
+        return $result;
+    }
+
+    public function toJson($options = 0)
+    {
+        return json_encode($this->toArray());
     }
 
     public function wrap(mixed $message = '', mixed $code = self::CODE_DEFAULT): static

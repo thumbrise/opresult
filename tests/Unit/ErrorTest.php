@@ -21,6 +21,7 @@ class ErrorTest extends TestCase
         $code1 = 'Конечный код';
         $error1 = $error2->wrap('И правда что-то не так', $code1);
 
+        dd($error1->toJson());
 
         $this->assertTrue($error1->is($code1));
         $this->assertTrue($error1->is($code2));
