@@ -4,5 +4,8 @@
             "name": "Ruslan Kokoev",
             "email": "ruslan.kokoev.1999@gmail.com"
         }
-    ]
+    ],
+    "require": {
+        "php": ">=8.1"
+    }
 }
