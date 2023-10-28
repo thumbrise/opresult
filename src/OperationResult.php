@@ -13,7 +13,6 @@ class OperationResult implements Stringable, Jsonable, JsonSerializable
 {
     public const CONTEXTUAL_FUNCTIONS_REGISTRY = [
         ['class' => self::class, 'function' => 'error'],
-        ['class' => self::class, 'function' => 'errorWithReport'],
         ['class' => self::class, 'function' => 'withError'],
     ];
 
@@ -31,11 +30,6 @@ class OperationResult implements Stringable, Jsonable, JsonSerializable
     public static function error(mixed $message = '', $code = Error::CODE_DEFAULT): static
     {
         return new static(null, Error::make($message, $code));
-    }
-
-    public static function errorWithReport(mixed $message = '', $code = Error::CODE_DEFAULT): static
-    {
-        return new static(null, Error::makeWithReport($message, $code));
     }
 
     public static function success(mixed $data = null): static

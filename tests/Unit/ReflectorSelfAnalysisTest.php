@@ -2,21 +2,20 @@
 
 namespace Tests\Unit;
 
-use JetBrains\PhpStorm\NoReturn;
 use OpResult\Reflector;
 use PHPUnit\Framework\TestCase;
 
 /**
  * !!! При модификации теста, стоит обратить внимание на переменные $line, $function, $class.
  */
-class ReflectorGetCallInfoTest extends TestCase
+class ReflectorSelfAnalysisTest extends TestCase
 {
     /**
      * @test
      */
-    #[NoReturn] public function selfAnalysis()
+    public function selfAnalysis()
     {
-        $line = 24;
+        $line = 23;
         $function = 'getCallInfo';
         $class = 'OpResult\Reflector';
 

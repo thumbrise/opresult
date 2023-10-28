@@ -25,7 +25,5 @@ class OperationResultTest extends TestCase
         $this->assertTrue($result1->isError($code1));
         $this->assertTrue($result1->isError($code2));
         $this->assertTrue($result1->isError($code3));
-
-        dd($result3);
     }
 }
