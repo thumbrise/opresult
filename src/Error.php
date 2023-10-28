@@ -127,7 +127,8 @@ class Error extends Exception implements Stringable, JsonSerializable
 
     public function withoutPrevious(): static
     {
-        return new static($this->messageOriginal, $this->codeOriginal);
+        $this->previous = null;
+        return $this;
     }
 
     public function wrap(mixed $message = '', mixed $code = self::CODE_DEFAULT): static
