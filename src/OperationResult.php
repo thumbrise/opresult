@@ -3,13 +3,16 @@
 namespace OpResult;
 
 use Illuminate\Contracts\Support\Jsonable;
+use JsonSerializable;
 use Stringable;
 
 /**
  * @template T
  */
-class OperationResult implements Stringable, Jsonable
+class OperationResult implements Stringable, Jsonable, JsonSerializable
 {
+
+
     /**
      * @param mixed|null|T $data
      * @param Error|null $error
@@ -57,6 +60,11 @@ class OperationResult implements Stringable, Jsonable
         return ! $this->isError();
     }
 
+    public function jsonSerialize(): mixed
+    {
+        return $this->toJson();
+    }
+
     public function toJson($options = 0)
     {
         if ($this->isError()) {
@@ -91,4 +99,6 @@ class OperationResult implements Stringable, Jsonable
         $this->error = null;
         return $this;
     }
+
+
 }

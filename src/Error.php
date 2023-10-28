@@ -13,23 +13,25 @@ class Error implements Stringable, Jsonable, JsonSerializable
     public const CODE_DEFAULT = 'UNKNOWN';
     private readonly mixed $message;
     private readonly mixed $code;
+    private readonly ?Error $previous;
 
-    public function __construct(mixed $message = '', mixed $code = self::CODE_DEFAULT)
+    public function __construct(mixed $message = '', mixed $code = self::CODE_DEFAULT, ?Error $previous = null)
     {
         $code = $this->prepareCode($code);
 
         $this->code = $code;
         $this->message = $message;
+        $this->previous = $previous;
     }
 
-    public static function make(mixed $message = '', mixed $code = self::CODE_DEFAULT): static
+    public static function make(mixed $message = '', mixed $code = self::CODE_DEFAULT, ?Error $previous = null): static
     {
-        return new static($message, $code);
+        return new static($message, $code, $previous);
     }
 
-    public static function makeWithReport(mixed $message = '', mixed $code = self::CODE_DEFAULT): static
+    public static function makeWithReport(mixed $message = '', mixed $code = self::CODE_DEFAULT, ?Error $previous = null): static
     {
-        $instance = new static($message, $code);
+        $instance = new static($message, $code, $previous);
         self::report($instance);
 
         return $instance;
@@ -60,7 +62,22 @@ class Error implements Stringable, Jsonable, JsonSerializable
 
         $code = $this->prepareCode($code);
 
-        return $this->code === $code;
+        $result = $this->code === $code;
+
+        if ($result) {
+            return true;
+        }
+
+        if (! empty($this->previous)) {
+            return $this->previous->is($code);
+        }
+
+        return false;
+    }
+
+    public function jsonSerialize(): mixed
+    {
+        return $this->toJson();
     }
 
     public function message(): mixed
@@ -87,14 +104,19 @@ class Error implements Stringable, Jsonable, JsonSerializable
 
     public function toJson($options = 0)
     {
-        return json_encode([
+        $json = [
             'error_message' => $this->message(),
             'error_code' => $this->code(),
-        ]);
+        ];
+        if (! empty($this->previous)) {
+            $json['error_previous'] = $this->previous->toJson();
+        }
+
+        return json_encode($json);
     }
 
-    public function jsonSerialize(): mixed
+    public function wrap(mixed $message = '', mixed $code = self::CODE_DEFAULT): static
     {
-        return $this->toJson();
+        return new static($message, $code, $this);
     }
 }
