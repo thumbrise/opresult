@@ -34,7 +34,7 @@ class Error extends Exception implements Stringable, JsonSerializable
 
 
         parent::__construct(
-            $this->messageForParentException($message, $code),
+            var_export($this->toArray(), true),
             0,
             $previous
         );
