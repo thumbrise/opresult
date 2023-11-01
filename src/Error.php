@@ -139,9 +139,9 @@ class Error extends Exception implements Stringable, JsonSerializable
     private function messageForParentException(mixed $message, mixed $code): string
     {
         if (is_array($message)) {
-            $message = json_encode($message);
+            $message = var_export($message, true);
         }
 
-        return sprintf("\ncode: %s\n%s", $code, $message);
+        return sprintf("\ncode: %s\nmessage:\n%s\n", $code, $message);
     }
 }
